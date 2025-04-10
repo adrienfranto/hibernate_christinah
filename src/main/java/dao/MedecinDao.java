@@ -82,33 +82,16 @@ public class MedecinDao {
     }
 
     // 🔹 SEARCH (Recherche dynamique)
-    public List<Medecin> searchMedecins(String nom, String prenom, String departement) {
+    public List<Medecin> searchMedecins(String recherche) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            String hql = "FROM Medecin p WHERE 1=0"; // Commence par une condition toujours fausse pour construire dynamiquement l'OR
-
-            if (nom != null && !nom.isEmpty()) {
-                hql += " OR lower(p.nom) LIKE lower(:nom)";
-            }if (nom != null && !nom.isEmpty()) {
-                hql += " OR lower(p.codeprof) LIKE lower(:nom)";
-            }
-            if (prenom != null && !prenom.isEmpty()) {
-                hql += " OR lower(p.prenom) LIKE lower(:prenom)";
-            }
-            if (departement != null && !departement.isEmpty()) {
-                hql += " OR lower(p.grade) LIKE lower(:departement)";
-            }
+            String hql = "FROM Medecin p WHERE "
+                       + "lower(p.grade) LIKE lower(:recherche) OR "
+                       + "lower(p.codemed) LIKE lower(:recherche) OR "
+                       + "lower(p.nom) LIKE lower(:recherche) OR "
+                       + "lower(p.prenom) LIKE lower(:recherche)";
 
             Query<Medecin> query = session.createQuery(hql, Medecin.class);
-
-            if (nom != null && !nom.isEmpty()) {
-                query.setParameter("nom", "%" + nom + "%");
-            }
-            if (prenom != null && !prenom.isEmpty()) {
-                query.setParameter("prenom", "%" + prenom + "%");
-            }
-            if (departement != null && !departement.isEmpty()) {
-                query.setParameter("departement", "%" + departement + "%");
-            }
+            query.setParameter("recherche", "%" + recherche + "%");
 
             return query.list();
         } catch (Exception e) {
@@ -116,5 +99,6 @@ public class MedecinDao {
             return Collections.emptyList();
         }
     }
+
 
 }

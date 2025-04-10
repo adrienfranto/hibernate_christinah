@@ -131,9 +131,9 @@ public class VisiterView extends JPanel {
     private void loadData() {
         try {
             tableModel.setRowCount(0);
-            List<Visiter> occupations = visiterDao.getAllOccuper();
+            List<Visiter> occupations = visiterDao.getAllVisiter();
             for (Visiter occupation : occupations) {
-                addOccuperToTable(occupation);
+                addVisiterToTable(occupation);
             }
             showStatus("Données chargées avec succès");
         } catch (Exception e) {
@@ -141,11 +141,11 @@ public class VisiterView extends JPanel {
         }
     }
     
-    private void addOccuperToTable(Visiter occupation) {
+    private void addVisiterToTable(Visiter occupation) {
         tableModel.addRow(new Object[]{
             occupation.getId(),
-            occupation.getCodeprof().getNom(),
-            occupation.getCodesal().getNom(),
+            occupation.getMedecin().getNom(),
+            occupation.getPatient().getNom(),
             dateFormat.format(occupation.getDateoc()),
             "buttons" // This is a placeholder, the renderer will replace it with buttons
         });
@@ -182,11 +182,11 @@ public class VisiterView extends JPanel {
             }
             
             // Use the updated search method that accepts both parameters
-            List<Visiter> results = visiterDao.searchOccuper(searchText, searchDate);
+            List<Visiter> results = visiterDao.searchVisiter(searchText, searchDate);
             
             tableModel.setRowCount(0);
             for (Visiter occupation : results) {
-                addOccuperToTable(occupation);
+                addVisiterToTable(occupation);
             }
             
             showStatus("Recherche terminée: " + results.size() + " résultat(s) trouvé(s)");
@@ -295,7 +295,7 @@ public class VisiterView extends JPanel {
                 }
                 
                 Visiter occupation = new Visiter(date, medecin, patient);
-                visiterDao.saveOccuper(occupation);
+                visiterDao.saveVisiter(occupation);
                 dialog.dispose();
                 loadData();
                 
@@ -319,7 +319,7 @@ public class VisiterView extends JPanel {
     }
     
     private void showEditDialog(int id) {
-        Visiter occupation = visiterDao.getOccuperById(id);
+        Visiter occupation = visiterDao.getVisiterById(id);
         if (occupation == null) {
             showError("Occupation introuvable");
             return;
@@ -355,7 +355,7 @@ public class VisiterView extends JPanel {
         JComboBox<ComboItem<Medecin>> professeurComboBox = new JComboBox<>();
         professeurComboBox.setFont(boldFont);
         loadProfesseurs(professeurComboBox);
-        selectProfesseurInComboBox(professeurComboBox, occupation.getCodeprof());
+        selectProfesseurInComboBox(professeurComboBox, occupation.getMedecin());
         formPanel.add(professeurComboBox, gbc);
         
         // Patient selector
@@ -373,7 +373,7 @@ public class VisiterView extends JPanel {
         JComboBox<ComboItem<Patient>> salleComboBox = new JComboBox<>();
         salleComboBox.setFont(boldFont);
         loadSalles(salleComboBox);
-        selectSalleInComboBox(salleComboBox, occupation.getCodesal());
+        selectSalleInComboBox(salleComboBox, occupation.getPatient());
         formPanel.add(salleComboBox, gbc);
         
         // Date field (using JDateChooser)
@@ -420,7 +420,7 @@ public class VisiterView extends JPanel {
                 Patient patient = salleItem.getValue();
                 
                 // Skip occupancy check if the same room is selected on the same day
-                if (patient.getId() != occupation.getCodesal().getId() && 
+                if (patient.getId() != occupation.getMedecin().getId() && 
                     visiterDao.isSalleOccupee(patient.getId(), date)) {
                     JOptionPane.showMessageDialog(dialog,
                         "Cette salle est déjà occupée à cette date",
@@ -428,10 +428,10 @@ public class VisiterView extends JPanel {
                     return;
                 }
                 
-                occupation.setCodeprof(medecin);
-                occupation.setCodesal(patient);
+                occupation.setMedecin(medecin);
+                occupation.setPatient(patient);
                 occupation.setDateoc(date);
-                visiterDao.updateOccuper(occupation);
+                visiterDao.updateVisiter(occupation);
                 dialog.dispose();
                 loadData();
                 
@@ -464,7 +464,7 @@ public class VisiterView extends JPanel {
         
         if (option == JOptionPane.YES_OPTION) {
             try {
-                visiterDao.deleteOccuper(id);
+                visiterDao.deleteVisiter(id);
                 loadData();
                 
                 // Show success modal notification

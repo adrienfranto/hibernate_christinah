@@ -240,7 +240,7 @@ public class MedecinView extends JPanel {
     
     private void performSearch() {
         String searchQuery = searchField.getText().trim();
-        List<Medecin> filteredMedecins = medecinDao.searchMedecins(searchQuery, "", "");
+        List<Medecin> filteredMedecins = medecinDao.searchMedecins(searchQuery);
         
         if (filteredMedecins.isEmpty() && !searchQuery.isEmpty()) {
             

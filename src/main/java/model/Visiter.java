@@ -22,12 +22,12 @@ public class Visiter {
 	private Date dateoc;
 	
 	@ManyToOne
-	@JoinColumn(name="codeprof")
-	private Medecin codeprof;
+	@JoinColumn(name="medecin")
+	private Medecin medecin;
 
 	@ManyToOne
-	@JoinColumn(name="codesal")
-	private Patient codesal;
+	@JoinColumn(name="patient")
+	private Patient patient;
 	
 	
 
@@ -35,26 +35,27 @@ public class Visiter {
 		super();
 	}
 
-	public Visiter(Date dateoc, Medecin codeprof, Patient codesal) {
-		super();
-		this.dateoc = dateoc;
-		this.codeprof = codeprof;
-		this.codesal = codesal;
-	}
-	public Visiter(Medecin medecin, Patient patient, Date date) {
-	    super();
-	    this.codeprof = medecin;
-	    this.codesal = patient;
-	    this.dateoc = date;
-	}
+	
 
-	public Visiter(int id, Date dateoc, Medecin codeprof, Patient codesal) {
+	public Visiter(int id, Date dateoc, Medecin medecin, Patient patient) {
 		super();
 		this.id = id;
 		this.dateoc = dateoc;
-		this.codeprof = codeprof;
-		this.codesal = codesal;
+		this.medecin = medecin;
+		this.patient = patient;
 	}
+
+
+	
+
+	public Visiter(Date dateoc, Medecin medecin, Patient patient) {
+		super();
+		this.dateoc = dateoc;
+		this.medecin = medecin;
+		this.patient = patient;
+	}
+
+
 
 	public int getId() {
 		return id;
@@ -72,19 +73,21 @@ public class Visiter {
 		this.dateoc = dateoc;
 	}
 
-	public Medecin getCodeprof() {
-		return codeprof;
+	public Medecin getMedecin() {
+		return medecin;
 	}
 
-	public void setCodeprof(Medecin codeprof) {
-		this.codeprof = codeprof;
+	public void setMedecin(Medecin medecin) {
+		this.medecin = medecin;
 	}
 
-	public Patient getCodesal() {
-		return codesal;
+	public Patient getPatient() {
+		return patient;
 	}
 
-	public void setCodesal(Patient codesal) {
-		this.codesal = codesal;
+	public void setPatient(Patient patient) {
+		this.patient = patient;
 	}
+
+	
 }

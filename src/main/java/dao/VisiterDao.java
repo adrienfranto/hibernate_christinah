@@ -14,42 +14,37 @@ public class VisiterDao {
     // Existing methods...
     
     // Updated search method to handle both text and date search
-    public List<Visiter> searchOccuper(String recherche, Date dateoc) {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            StringBuilder hql = new StringBuilder("FROM Visiter o WHERE 1=1"); // Start with true condition
-            
-            // Build the query dynamically based on provided parameters
-            if (recherche != null && !recherche.isEmpty()) {
-                hql.append(" AND (o.codeprof.nom LIKE :nomProf OR o.codesal.codesal LIKE :codeSalle OR o.codesal.designation LIKE :designationSalle )");
-            }
-            
-            if (dateoc != null) {
-                hql.append(" AND o.dateoc = :dateoc");
-            }
-            
-            Query<Visiter> query = session.createQuery(hql.toString(), Visiter.class);
-            
-            // Set parameters only if they're provided
-            if (recherche != null && !recherche.isEmpty()) {
-                query.setParameter("nomProf", "%" + recherche + "%");
-                query.setParameter("codeSalle", "%" + recherche + "%");
-                query.setParameter("designationSalle", "%" + recherche + "%");
-            }
-            
-            if (dateoc != null) {
-                query.setParameter("dateoc", dateoc);
-            }
-            
-            return query.list();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Collections.emptyList();
-        }
-    }
+	public List<Visiter> searchVisiter(String recherche, Date dateoc) {
+	    try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+	        String hql = "FROM Visiter o WHERE "
+	                   + "(lower(o.medecin.nom) LIKE lower(:recherche) OR "
+	                   + "lower(o.medecin.prenom) LIKE lower(:recherche) OR "
+	                   + "lower(o.patient.nom) LIKE lower(:recherche) OR "
+	                   + "lower(o.patient.prenom) LIKE lower(:recherche))";
+
+	        if (dateoc != null) {
+	            hql += " AND o.dateoc = :dateoc";
+	        }
+
+	        Query<Visiter> query = session.createQuery(hql, Visiter.class);
+
+	        query.setParameter("recherche", "%" + recherche + "%");
+
+	        if (dateoc != null) {
+	            query.setParameter("dateoc", dateoc);
+	        }
+
+	        return query.list();
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return Collections.emptyList();
+	    }
+	}
+
 
     // Original search method for backwards compatibility
-    public List<Visiter> searchOccuper(Date dateoc) {
-        return searchOccuper(null, dateoc);
+    public List<Visiter> searchVisiter(Date dateoc) {
+        return searchVisiter(null, dateoc);
     }
     
     // Check if a room is already occupied on a given date
@@ -69,7 +64,7 @@ public class VisiterDao {
     }
     
     // Get all Visiter entries
-    public List<Visiter> getAllOccuper() {
+    public List<Visiter> getAllVisiter() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.createQuery("FROM Visiter", Visiter.class).list();
         } catch (Exception e) {
@@ -79,7 +74,7 @@ public class VisiterDao {
     }
     
     // Get Visiter by ID
-    public Visiter getOccuperById(int id) {
+    public Visiter getVisiterById(int id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.get(Visiter.class, id);
         } catch (Exception e) {
@@ -90,7 +85,7 @@ public class VisiterDao {
     
     // Save new Visiter
     @SuppressWarnings("deprecation")
-	public void saveOccuper(Visiter visiter) {
+	public void saveVisiter(Visiter visiter) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             session.beginTransaction();
             session.save(visiter);
@@ -102,7 +97,7 @@ public class VisiterDao {
     
     // Update existing Visiter
     @SuppressWarnings("deprecation")
-	public void updateOccuper(Visiter visiter) {
+	public void updateVisiter(Visiter visiter) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             session.beginTransaction();
             session.update(visiter);
@@ -114,7 +109,7 @@ public class VisiterDao {
     
     // Delete Visiter
     @SuppressWarnings("deprecation")
-	public void deleteOccuper(int id) {
+	public void deleteVisiter(int id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             session.beginTransaction();
             Visiter visiter = session.get(Visiter.class, id);
