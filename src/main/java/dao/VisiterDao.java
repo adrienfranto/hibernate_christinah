@@ -20,11 +20,10 @@ public class VisiterDao {
 	                   + "(lower(o.medecin.nom) LIKE lower(:recherche) OR "
 	                   + "lower(o.medecin.prenom) LIKE lower(:recherche) OR "
 	                   + "lower(o.patient.nom) LIKE lower(:recherche) OR "
-	                   + "lower(o.patient.prenom) LIKE lower(:recherche))";
+	                   + "lower(o.patient.prenom) LIKE lower(:recherche)OR"
+	                   + " o.dateoc = :dateoc)";
 
-	        if (dateoc != null) {
-	            hql += " AND o.dateoc = :dateoc";
-	        }
+	        
 
 	        Query<Visiter> query = session.createQuery(hql, Visiter.class);
 
